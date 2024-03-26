@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+::-webkit-scrollbar-thumb {
+  background: #222328;
+  border-radius: 0px 0px 20px 0px;
+}
