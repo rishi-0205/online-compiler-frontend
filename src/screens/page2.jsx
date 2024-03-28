@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import { xcodeDark } from "@uiw/codemirror-themes-all";
+import { submitAndRetrieveOutput } from "./output.js";
 
 const PageTwo = () => {
   const [code, setCode] = useState("");
   const [stdin, setStdin] = useState("");
   const [output, setOutput] = useState("");
   const [language, setLanguage] = useState("cpp");
+  var langId = 54;
   const onChange = React.useCallback((val, viewUpdate) => {
     setCode(val);
   }, []);
@@ -15,22 +17,44 @@ const PageTwo = () => {
     setLanguage(e.target.value);
   };
 
+  const onRun = () => {
+    submitAndRetrieveOutput(code, langId, stdin)
+      .then((output) => {
+        setOutput(output);
+        console.log("Judge0 output:", output);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const onClear = () => {
+    setCode("");
+    setOutput("");
+    setStdin("");
+  };
+
   let languageStream;
   switch (language) {
     case "cpp":
       languageStream = langs.cpp();
+      langId = 54;
       break;
     case "java":
       languageStream = langs.java();
+      langId = 91;
       break;
     case "javascript":
       languageStream = langs.javascript();
+      langId = 93;
       break;
     case "python":
       languageStream = langs.python();
+      langId = 92;
       break;
     default:
       languageStream = langs.cpp();
+      langId = 54;
   }
 
   return (
@@ -97,7 +121,7 @@ const PageTwo = () => {
               <option value="python">Python</option>
             </select>
             <button
-              onClick={() => setCode("")}
+              onClick={onClear}
               style={{
                 display: "flex",
                 justifyContent: "center",
@@ -195,7 +219,7 @@ const PageTwo = () => {
               }}
             >
               <button
-                onClick={() => setCode("")}
+                onClick={onRun}
                 style={{
                   display: "flex",
                   justifyContent: "center",
@@ -269,14 +293,15 @@ const PageTwo = () => {
               }}
             >
               <p
-                value={output}
                 style={{
                   height: "80%",
                   width: "100%",
                   backgroundColor: "#292A30",
                   border: "none",
                 }}
-              ></p>
+              >
+                {output}
+              </p>
             </div>
           </div>
         </div>
